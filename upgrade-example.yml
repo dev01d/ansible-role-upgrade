@@ -1,0 +1,12 @@
+- hosts: '{{ host }}'
+  become: yes
+  vars:
+    host: # Host group
+  # Set facts for role digest
+  # pre_tasks unnecisary if using default port 22
+  pre_tasks:
+    - name: Setting SSH facts
+      set_fact:
+        ssh_port: # non standsrd SSH port number
+  roles:
+    - upgrade

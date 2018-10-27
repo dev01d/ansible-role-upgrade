@@ -1,0 +1,27 @@
+  - name: Update APT package cache
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+  - name: Upgrade to the latest packages
+    apt:
+      upgrade: dist
+  - name: Remove unused package cache
+    apt:
+      autoclean: yes
+  - name: Autoremove residual packages
+    apt:
+      autoremove: yes
+  - name: reboot hosts
+    shell: "sleep 10 && shutdown -r now 'Reboot triggered by Ansible' &"
+    ignore_errors: yes
+    args:
+      removes: /var/run/reboot-required
+    register: reboot
+  - name: Wait for hosts to come up again
+    wait_for:
+      host: '{{ inventory_hostname }}'
+      port: '{{ ssh_port }}'
+      state: 'started'
+      delay: '60'
+      timeout: '360'
+    delegate_to: 'localhost'
